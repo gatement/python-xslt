@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="test.xsl" ?>
+<order>
+	<item>
+		<name>pen</name>
+		<quantity>2</quantity>
+	</item>
+	<item>
+		<name>eraser</name>
+		<quantity>5</quantity>
+	</item>
+</order>
