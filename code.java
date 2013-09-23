@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
 
-		order - 
 		name: pen,
 		quantity: 2;
 	

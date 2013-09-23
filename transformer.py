@@ -1,49 +1,26 @@
-import libxml2, libxslt  
+from lxml import etree
+import StringIO 
 
-class compoundXML:  
-	def __init__(self):  
-		self._result = None  
-		self._xsl = None  
-		self._xml = None  
+#xslt_root = etree.XML('''\
+#<xsl:stylesheet version="1.0"
+#xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+#    <xsl:template match="/">
+#        <foo><xsl:value-of select="/a/b/text()" /></foo>
+#    </xsl:template>
+#</xsl:stylesheet>''')
+xslt_root = etree.parse("./test.xsl");
+#print etree.tostring(xslt_root.getroot(), pretty_print=True)
+transform = etree.XSLT(xslt_root)
 
+#f = StringIO.StringIO('<a><b>Text</b></a>')
+#doc = etree.parse(f)
+doc = etree.parse("./test.xml")
+#print etree.tostring(doc.getroot(), pretty_print=True)
 
-	def do(self, xml_file_name, xsl_file_name):         
-		self._xml = libxml2.parseFile(xml_file_name)  
-		if self._xml == None:  
-			return 0  
-		styledoc = libxml2.parseFile(xsl_file_name)  
-		if styledoc == None:  
-			return 0  
-		self._xsl = libxslt.parseStylesheetDoc(styledoc)  
-		if self._xsl == None:  
-			return 0  
+result_tree = transform(doc)
+print result_tree.getroot().text
+#result = etree.tostring(result_tree.getroot(), pretty_print=True)
+#print result
 
-		self._result = self._xsl.applyStylesheet(self._xml, None)                 
-
-	def get_xml_doc(self):  
-		return self._result             
-
-	def get_translated(self):  
-		return self._result.serialize('UTF-8')         
-
-	def save_translated(self, file_name):  
-		self._xsl.saveResultToFilename(file_name, self._result, 0)  
-
-	def release(self):  
-		''''' 
-		this function must be called in the end. 
-		'''  
-		self._xsl.freeStylesheet()  
-		self._xml.freeDoc()  
-		self._result.freeDoc()  
-		self._xsl = None  
-		self._xml = None  
-		self._result = None  
-
-if __name__ == '__main__':  
-	test = compoundXML()  
-	test.do('test.xml', 'test.xsl')  
-	print test.get_translated()  
-	test.save_translated('test.txt')  
-	test.release() 
-
+with open("./code.java", "w") as output_file:
+    output_file.write(result_tree.getroot().text)
